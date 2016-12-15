@@ -1,0 +1,26 @@
+{
+  "name": "hacker-news-example",
+  "version": "1.0.0",
+  "description": "Example that demonstrates type-checking API data with Flow",
+  "main": "index.js",
+  "scripts": {
+    "flow": "flow",
+    "demo": "babel-node index.js"
+  },
+  "author": "Jesse Hallett <jesse@sitr.us>",
+  "license": "MIT",
+  "babel": {
+    "presets": [
+      "react",
+      "stage-3",
+      "node7"
+    ]
+  },
+  "dependencies": {
+    "node-fetch": "*"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.18",
+    "flow-bin": "^0.36"
+  }
+}
