@@ -2,7 +2,7 @@
 
 Example script to demonstrate type-checking API data with Flow.
 This is example code from the article
-[Flow Cookbook: Unpacking JSON API data](TODO).
+[Flow Cookbook: Unpacking JSON API data](https://sitr.us/2016/12/20/flow-cookbook-unpacking-json.html).
 
 Install project dependencies before running the code or running the type checker:
 
