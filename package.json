@@ -21,6 +21,9 @@
   },
   "devDependencies": {
     "babel-cli": "^6.18",
+    "babel-preset-node7": "^1.4.0",
+    "babel-preset-react": "^6.16.0",
+    "babel-preset-stage-3": "^6.17.0",
     "flow-bin": "^0.36"
   }
 }
