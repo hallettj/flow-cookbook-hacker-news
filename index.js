@@ -38,8 +38,9 @@ function fetchItem(id: ID): Promise<Item> {
 
 function getTitle(item: Item): ?string {
   if (item.type === 'story') {
-    // This works because this line is only reachable if `item` has the `story`
-    // type, which means that it does have a `title` field.
+    // This works because this line is only reachable if the type of
+    // `item.type` is `'story'`, which means that `item` can be expected to
+    // have a `title` property.
     return item.title
   }
 }
