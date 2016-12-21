@@ -106,8 +106,8 @@ function formatPoll({ by, title }: Poll, opts: PollOpt[]): string {
 export async function fetchPollOpts({ parts }: Poll): Promise<PollOpt[]> {
   const promises = parts.map(fetchItem)
   const items = await Promise.all(promises)
-  return flatMap(items, i => (
-    i.type === 'pollopt' ? [i] : []
+  return flatMap(items, item => (
+    item.type === 'pollopt' ? [item] : []
   ))
 }
 
