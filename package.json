@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "flow": "flow",
-    "demo": "babel-node index.js"
+    "demo": "babel-node --eval \"require('./index').main()\""
   },
   "author": "Jesse Hallett <jesse@sitr.us>",
   "license": "MIT",
