@@ -143,3 +143,44 @@ function flatMap<A, B>(xs: A[], fn: (x: A) => B[]): B[] {
   }
   return result
 }
+
+
+/* Additional Hacker News API endpoints */
+
+export async function fetchTopStories(n: number): Promise<Story[]> {
+  const storyIds = await nodeFetch(`https://hacker-news.firebaseio.com/v0/topstories.json`)
+    .then(res => res.json())
+  return await Promise.all(
+    storyIds.slice(0,n).map(fetchStory)
+  )
+}
+
+async function fetchStory(id: ID): Promise<Story> {
+  const item = await fetchItem(id)
+  if (item.type === 'story') {
+    return item
+  }
+  else {
+    return Promise.reject(new Error(`item ${id} is not a ${item.type}, not a story`))
+  }
+}
+
+export type CommentTree = { comment: Comment, kids: CommentTree[] }
+
+export function fetchComments({ kids }: Story | Comment): Promise<CommentTree[]> {
+  return Promise.all(kids.map(async function(id) {
+    const comment = await fetchComment(id)
+    const kids = await fetchComments(comment)
+    return { comment, kids }
+  }))
+}
+
+async function fetchComment(id: ID): Promise<Comment> {
+  const item = await fetchItem(id)
+  if (item.type === 'comment') {
+    return item
+  }
+  else {
+    return Promise.reject(new Error(`item ${id} is not a ${item.type}, not a comment`))
+  }
+}
