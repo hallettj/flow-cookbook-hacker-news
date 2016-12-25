@@ -28,9 +28,9 @@ type TopLevel = {
 }
 
 // These type aliases just help to illustrate the purpose of certain fields
-type Username = string
-type ID = number
-type URL = string
+export type Username = string
+export type ID = number
+export type URL = string
 
 export function fetchItem(id: ID): Promise<Item> {
   return nodeFetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`)

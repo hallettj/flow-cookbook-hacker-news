@@ -225,7 +225,115 @@ var betterClient = exports.betterClient = function () {
 // output array, or pretty much anything you might need.
 
 
+/* Additional Hacker News API endpoints */
+
+var fetchTopStories = exports.fetchTopStories = function () {
+  var _ref8 = _asyncToGenerator(regeneratorRuntime.mark(function _callee6(n) {
+    var storyIds;
+    return regeneratorRuntime.wrap(function _callee6$(_context6) {
+      while (1) {
+        switch (_context6.prev = _context6.next) {
+          case 0:
+            _context6.next = 2;
+            return nodeFetch('https://hacker-news.firebaseio.com/v0/topstories.json').then(function (res) {
+              return res.json();
+            });
+
+          case 2:
+            storyIds = _context6.sent;
+            _context6.next = 5;
+            return Promise.all(storyIds.slice(0, n).map(fetchStory));
+
+          case 5:
+            return _context6.abrupt('return', _context6.sent);
+
+          case 6:
+          case 'end':
+            return _context6.stop();
+        }
+      }
+    }, _callee6, this);
+  }));
+
+  return function fetchTopStories(_x5) {
+    return _ref8.apply(this, arguments);
+  };
+}();
+
+var fetchStory = function () {
+  var _ref9 = _asyncToGenerator(regeneratorRuntime.mark(function _callee7(id) {
+    var item;
+    return regeneratorRuntime.wrap(function _callee7$(_context7) {
+      while (1) {
+        switch (_context7.prev = _context7.next) {
+          case 0:
+            _context7.next = 2;
+            return fetchItem(id);
+
+          case 2:
+            item = _context7.sent;
+
+            if (!(item.type === 'story')) {
+              _context7.next = 7;
+              break;
+            }
+
+            return _context7.abrupt('return', item);
+
+          case 7:
+            return _context7.abrupt('return', Promise.reject(new Error('item ' + id + ' is not a ' + item.type + ', not a story')));
+
+          case 8:
+          case 'end':
+            return _context7.stop();
+        }
+      }
+    }, _callee7, this);
+  }));
+
+  return function fetchStory(_x6) {
+    return _ref9.apply(this, arguments);
+  };
+}();
+
+var fetchComment = function () {
+  var _ref12 = _asyncToGenerator(regeneratorRuntime.mark(function _callee9(id) {
+    var item;
+    return regeneratorRuntime.wrap(function _callee9$(_context9) {
+      while (1) {
+        switch (_context9.prev = _context9.next) {
+          case 0:
+            _context9.next = 2;
+            return fetchItem(id);
+
+          case 2:
+            item = _context9.sent;
+
+            if (!(item.type === 'comment')) {
+              _context9.next = 7;
+              break;
+            }
+
+            return _context9.abrupt('return', item);
+
+          case 7:
+            return _context9.abrupt('return', Promise.reject(new Error('item ' + id + ' is not a ' + item.type + ', not a comment')));
+
+          case 8:
+          case 'end':
+            return _context9.stop();
+        }
+      }
+    }, _callee9, this);
+  }));
+
+  return function fetchComment(_x8) {
+    return _ref12.apply(this, arguments);
+  };
+}();
+
 exports.fetchItem = fetchItem;
+exports.fetchComments = fetchComments;
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
@@ -329,4 +437,38 @@ function flatMap(xs, fn) {
   }
 
   return result;
+}function fetchComments(_ref10) {
+  var kids = _ref10.kids;
+
+  return Promise.all(kids.map(function () {
+    var _ref11 = _asyncToGenerator(regeneratorRuntime.mark(function _callee8(id) {
+      var comment, kids;
+      return regeneratorRuntime.wrap(function _callee8$(_context8) {
+        while (1) {
+          switch (_context8.prev = _context8.next) {
+            case 0:
+              _context8.next = 2;
+              return fetchComment(id);
+
+            case 2:
+              comment = _context8.sent;
+              _context8.next = 5;
+              return fetchComments(comment);
+
+            case 5:
+              kids = _context8.sent;
+              return _context8.abrupt('return', { comment: comment, kids: kids });
+
+            case 7:
+            case 'end':
+              return _context8.stop();
+          }
+        }
+      }, _callee8, this);
+    }));
+
+    return function (_x7) {
+      return _ref11.apply(this, arguments);
+    };
+  }()));
 }
