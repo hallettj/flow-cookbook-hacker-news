@@ -6,7 +6,7 @@
   "scripts": {
     "flow": "flow",
     "demo": "npm run prepublish && node --require 'regenerator-runtime/runtime' --eval \"require('./index').main()\"",
-    "prepublish": "babel index.js.flow --out-file index.js"
+    "prepublish": "babel index.js.flow --out-file index.js --source-maps"
   },
   "author": "Jesse Hallett <jesse@sitr.us>",
   "license": "MIT",
