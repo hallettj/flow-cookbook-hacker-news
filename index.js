@@ -281,7 +281,7 @@ var fetchStory = function () {
             return _context7.abrupt('return', item);
 
           case 7:
-            return _context7.abrupt('return', Promise.reject(new Error('item ' + id + ' is not a ' + item.type + ', not a story')));
+            return _context7.abrupt('return', Promise.reject(new Error('item ' + id + ' is an ' + item.type + ', not a story')));
 
           case 8:
           case 'end':
@@ -317,7 +317,7 @@ var fetchComment = function () {
             return _context9.abrupt('return', item);
 
           case 7:
-            return _context9.abrupt('return', Promise.reject(new Error('item ' + id + ' is not a ' + item.type + ', not a comment')));
+            return _context9.abrupt('return', Promise.reject(new Error('item ' + id + ' is an ' + item.type + ', not a comment')));
 
           case 8:
           case 'end':

@@ -161,7 +161,7 @@ async function fetchStory(id: ID): Promise<Story> {
     return item
   }
   else {
-    return Promise.reject(new Error(`item ${id} is not a ${item.type}, not a story`))
+    return Promise.reject(new Error(`item ${id} is an ${item.type}, not a story`))
   }
 }
 
@@ -181,6 +181,6 @@ async function fetchComment(id: ID): Promise<Comment> {
     return item
   }
   else {
-    return Promise.reject(new Error(`item ${id} is not a ${item.type}, not a comment`))
+    return Promise.reject(new Error(`item ${id} is an ${item.type}, not a comment`))
   }
 }
