@@ -6,12 +6,12 @@ const nodeFetch: typeof fetch = require('node-fetch')
 
 export type Item = Story | Ask | Job | Poll | PollOpt | Comment
 
-export type Story   = { type: 'story', kids: ID[], url: URL }                 & ItemCommon & TopLevel
-export type Ask     = { type: 'ask',  kids: ID[], text: string, url: URL }    & ItemCommon & TopLevel
-export type Job     = { type: 'job', text: string, url: URL }                 & ItemCommon & TopLevel
-export type Poll    = { type: 'poll', kids: ID[], parts: ID[], text: string } & ItemCommon & TopLevel
+export type Story   = { type: 'story', kids?: ID[], url: URL }                 & ItemCommon & TopLevel
+export type Ask     = { type: 'ask',  kids?: ID[], text: string, url: URL }    & ItemCommon & TopLevel
+export type Job     = { type: 'job', text: string, url: URL }                  & ItemCommon & TopLevel
+export type Poll    = { type: 'poll', kids?: ID[], parts: ID[], text: string } & ItemCommon & TopLevel
 export type PollOpt = { type: 'pollopt', parent: ID, score: number, text: string } & ItemCommon
-export type Comment = { type: 'comment', kids: ID[], parent: ID, text: string }    & ItemCommon
+export type Comment = { type: 'comment', kids?: ID[], parent: ID, text: string }   & ItemCommon
 
 // Fields common to all item types
 type ItemCommon = {
@@ -55,7 +55,8 @@ function formatItem(item: Item): string {
     case 'job':
       return `job posting: ${item.title}`
     case 'poll':
-      return `poll: "${item.title}" - choose one of ${item.kids.length} options`
+      const numOpts = item.kids ? item.kids.length : 0
+      return `poll: "${item.title}" - choose one of ${numOpts} options`
     case 'pollopt':
       return `poll option: ${item.text}`
     case 'comment':
@@ -168,6 +169,9 @@ async function fetchStory(id: ID): Promise<Story> {
 export type CommentTree = { comment: Comment, kids: CommentTree[] }
 
 export function fetchComments({ kids }: Story | Comment): Promise<CommentTree[]> {
+  if (!kids) {
+    return Promise.resolve([])
+  }
   return Promise.all(kids.map(async function(id) {
     const comment = await fetchComment(id)
     const kids = await fetchComments(comment)

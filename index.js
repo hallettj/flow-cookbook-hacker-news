@@ -371,7 +371,8 @@ function formatItem(item) {
     case 'job':
       return 'job posting: ' + item.title;
     case 'poll':
-      return 'poll: "' + item.title + '" - choose one of ' + item.kids.length + ' options';
+      var numOpts = item.kids ? item.kids.length : 0;
+      return 'poll: "' + item.title + '" - choose one of ' + numOpts + ' options';
     case 'pollopt':
       return 'poll option: ' + item.text;
     case 'comment':
@@ -440,6 +441,9 @@ function flatMap(xs, fn) {
 }function fetchComments(_ref10) {
   var kids = _ref10.kids;
 
+  if (!kids) {
+    return Promise.resolve([]);
+  }
   return Promise.all(kids.map(function () {
     var _ref11 = _asyncToGenerator(regeneratorRuntime.mark(function _callee8(id) {
       var comment, kids;
