@@ -220,16 +220,11 @@ var betterClient = exports.betterClient = function () {
   };
 }();
 
-// Provides flexible array processing - this function can be used to remove
-// items from an array, to replace individual items with multiple items in the
-// output array, or pretty much anything you might need.
-
-
 /* Additional Hacker News API endpoints */
 
 var fetchTopStories = exports.fetchTopStories = function () {
   var _ref8 = _asyncToGenerator(regeneratorRuntime.mark(function _callee6(n) {
-    var storyIds;
+    var storyIds, results;
     return regeneratorRuntime.wrap(function _callee6$(_context6) {
       while (1) {
         switch (_context6.prev = _context6.next) {
@@ -245,9 +240,10 @@ var fetchTopStories = exports.fetchTopStories = function () {
             return Promise.all(storyIds.slice(0, n).map(fetchStory));
 
           case 5:
-            return _context6.abrupt('return', _context6.sent);
+            results = _context6.sent;
+            return _context6.abrupt('return', nub(results));
 
-          case 6:
+          case 7:
           case 'end':
             return _context6.stop();
         }
@@ -255,10 +251,13 @@ var fetchTopStories = exports.fetchTopStories = function () {
     }, _callee6, this);
   }));
 
-  return function fetchTopStories(_x5) {
+  return function fetchTopStories(_x4) {
     return _ref8.apply(this, arguments);
   };
 }();
+
+// Fetch an item, but resolve to `null` if the item is not a story.
+
 
 var fetchStory = function () {
   var _ref9 = _asyncToGenerator(regeneratorRuntime.mark(function _callee7(id) {
@@ -281,7 +280,7 @@ var fetchStory = function () {
             return _context7.abrupt('return', item);
 
           case 7:
-            return _context7.abrupt('return', Promise.reject(new Error('item ' + id + ' is an ' + item.type + ', not a story')));
+            return _context7.abrupt('return', null);
 
           case 8:
           case 'end':
@@ -291,7 +290,7 @@ var fetchStory = function () {
     }, _callee7, this);
   }));
 
-  return function fetchStory(_x6) {
+  return function fetchStory(_x5) {
     return _ref9.apply(this, arguments);
   };
 }();
@@ -327,10 +326,17 @@ var fetchComment = function () {
     }, _callee9, this);
   }));
 
-  return function fetchComment(_x8) {
+  return function fetchComment(_x7) {
     return _ref12.apply(this, arguments);
   };
 }();
+
+/* helpers */
+
+// Provides flexible array processing - this function can be used to remove
+// items from an array, to replace individual items with multiple items in the
+// output array, or pretty much anything you might need.
+
 
 exports.fetchItem = fetchItem;
 exports.fetchComments = fetchComments;
@@ -410,35 +416,7 @@ function formatPoll(_ref3, opts) {
   }).join("\n");
 }
 
-function flatMap(xs, fn) {
-  var result = [];
-  var _iteratorNormalCompletion2 = true;
-  var _didIteratorError2 = false;
-  var _iteratorError2 = undefined;
-
-  try {
-    for (var _iterator2 = xs[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-      var _x4 = _step2.value;
-
-      result.push.apply(result, fn(_x4));
-    }
-  } catch (err) {
-    _didIteratorError2 = true;
-    _iteratorError2 = err;
-  } finally {
-    try {
-      if (!_iteratorNormalCompletion2 && _iterator2.return) {
-        _iterator2.return();
-      }
-    } finally {
-      if (_didIteratorError2) {
-        throw _iteratorError2;
-      }
-    }
-  }
-
-  return result;
-}function fetchComments(_ref10) {
+function fetchComments(_ref10) {
   var kids = _ref10.kids;
 
   if (!kids) {
@@ -471,10 +449,47 @@ function flatMap(xs, fn) {
       }, _callee8, this);
     }));
 
-    return function (_x7) {
+    return function (_x6) {
       return _ref11.apply(this, arguments);
     };
   }()));
+}
+
+function flatMap(xs, fn) {
+  var result = [];
+  var _iteratorNormalCompletion2 = true;
+  var _didIteratorError2 = false;
+  var _iteratorError2 = undefined;
+
+  try {
+    for (var _iterator2 = xs[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+      var _x8 = _step2.value;
+
+      result.push.apply(result, fn(_x8));
+    }
+  } catch (err) {
+    _didIteratorError2 = true;
+    _iteratorError2 = err;
+  } finally {
+    try {
+      if (!_iteratorNormalCompletion2 && _iterator2.return) {
+        _iterator2.return();
+      }
+    } finally {
+      if (_didIteratorError2) {
+        throw _iteratorError2;
+      }
+    }
+  }
+
+  return result;
+}
+
+// Removes `null` or `undefined` values from an array
+function nub(xs) {
+  return flatMap(xs, function (x) {
+    return x ? [x] : [];
+  });
 }
 
 //# sourceMappingURL=index.js.map

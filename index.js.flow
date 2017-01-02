@@ -134,35 +134,26 @@ export async function betterClient() {
   }
 }
 
-// Provides flexible array processing - this function can be used to remove
-// items from an array, to replace individual items with multiple items in the
-// output array, or pretty much anything you might need.
-function flatMap<A, B>(xs: A[], fn: (x: A) => B[]): B[] {
-  const result = []
-  for (const x of xs) {
-    result.push.apply(result, fn(x))
-  }
-  return result
-}
-
 
 /* Additional Hacker News API endpoints */
 
 export async function fetchTopStories(n: number): Promise<Story[]> {
   const storyIds = await nodeFetch(`https://hacker-news.firebaseio.com/v0/topstories.json`)
     .then(res => res.json())
-  return await Promise.all(
+  const results = await Promise.all(
     storyIds.slice(0,n).map(fetchStory)
   )
+  return nub(results)
 }
 
-async function fetchStory(id: ID): Promise<Story> {
+// Fetch an item, but resolve to `null` if the item is not a story.
+async function fetchStory(id: ID): Promise<?Story> {
   const item = await fetchItem(id)
   if (item.type === 'story') {
     return item
   }
   else {
-    return Promise.reject(new Error(`item ${id} is an ${item.type}, not a story`))
+    return null
   }
 }
 
@@ -187,4 +178,23 @@ async function fetchComment(id: ID): Promise<Comment> {
   else {
     return Promise.reject(new Error(`item ${id} is an ${item.type}, not a comment`))
   }
+}
+
+
+/* helpers */
+
+// Provides flexible array processing - this function can be used to remove
+// items from an array, to replace individual items with multiple items in the
+// output array, or pretty much anything you might need.
+function flatMap<A, B>(xs: A[], fn: (x: A) => B[]): B[] {
+  const result = []
+  for (const x of xs) {
+    result.push.apply(result, fn(x))
+  }
+  return result
+}
+
+// Removes `null` or `undefined` values from an array
+function nub<A>(xs: Array<?A>): Array<A> {
+  return flatMap(xs, x => x ? [x] : [])
 }
