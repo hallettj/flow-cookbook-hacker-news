@@ -224,7 +224,7 @@ var betterClient = exports.betterClient = function () {
 
 var fetchTopStories = exports.fetchTopStories = function () {
   var _ref8 = _asyncToGenerator(regeneratorRuntime.mark(function _callee6(n) {
-    var storyIds, results;
+    var storyIds;
     return regeneratorRuntime.wrap(function _callee6$(_context6) {
       while (1) {
         switch (_context6.prev = _context6.next) {
@@ -236,14 +236,9 @@ var fetchTopStories = exports.fetchTopStories = function () {
 
           case 2:
             storyIds = _context6.sent;
-            _context6.next = 5;
-            return Promise.all(storyIds.slice(0, n).map(fetchStory));
+            return _context6.abrupt('return', fetchNStories(storyIds, n));
 
-          case 5:
-            results = _context6.sent;
-            return _context6.abrupt('return', nub(results));
-
-          case 7:
+          case 4:
           case 'end':
             return _context6.stop();
         }
@@ -256,33 +251,41 @@ var fetchTopStories = exports.fetchTopStories = function () {
   };
 }();
 
-// Fetch an item, but resolve to `null` if the item is not a story.
-
-
-var fetchStory = function () {
-  var _ref9 = _asyncToGenerator(regeneratorRuntime.mark(function _callee7(id) {
-    var item;
+var fetchNStories = function () {
+  var _ref9 = _asyncToGenerator(regeneratorRuntime.mark(function _callee7(storyIds, n) {
+    var results, justStories, m, remainingIds;
     return regeneratorRuntime.wrap(function _callee7$(_context7) {
       while (1) {
         switch (_context7.prev = _context7.next) {
           case 0:
             _context7.next = 2;
-            return fetchItem(id);
+            return Promise.all(storyIds.slice(0, n).map(fetchStory));
 
           case 2:
-            item = _context7.sent;
+            results = _context7.sent;
+            justStories = nub(results);
 
-            if (!(item.type === 'story')) {
-              _context7.next = 7;
+            // Check to see if `nub` left us with fewer than `n` stories.
+
+            if (!(justStories.length < n && storyIds.length > n)) {
+              _context7.next = 14;
               break;
             }
 
-            return _context7.abrupt('return', item);
+            m = n - justStories.length;
+            remainingIds = storyIds.slice(n);
+            _context7.t0 = justStories;
+            _context7.next = 10;
+            return fetchNStories(remainingIds, m);
 
-          case 7:
-            return _context7.abrupt('return', null);
+          case 10:
+            _context7.t1 = _context7.sent;
+            return _context7.abrupt('return', _context7.t0.concat.call(_context7.t0, _context7.t1));
 
-          case 8:
+          case 14:
+            return _context7.abrupt('return', justStories);
+
+          case 15:
           case 'end':
             return _context7.stop();
         }
@@ -290,44 +293,83 @@ var fetchStory = function () {
     }, _callee7, this);
   }));
 
-  return function fetchStory(_x5) {
+  return function fetchNStories(_x5, _x6) {
     return _ref9.apply(this, arguments);
   };
 }();
 
-var fetchComment = function () {
-  var _ref12 = _asyncToGenerator(regeneratorRuntime.mark(function _callee9(id) {
+// Fetch an item, but resolve to `null` if the item is not a story.
+
+
+var fetchStory = function () {
+  var _ref10 = _asyncToGenerator(regeneratorRuntime.mark(function _callee8(id) {
     var item;
-    return regeneratorRuntime.wrap(function _callee9$(_context9) {
+    return regeneratorRuntime.wrap(function _callee8$(_context8) {
       while (1) {
-        switch (_context9.prev = _context9.next) {
+        switch (_context8.prev = _context8.next) {
           case 0:
-            _context9.next = 2;
+            _context8.next = 2;
             return fetchItem(id);
 
           case 2:
-            item = _context9.sent;
+            item = _context8.sent;
 
-            if (!(item.type === 'comment')) {
-              _context9.next = 7;
+            if (!(item.type === 'story')) {
+              _context8.next = 7;
               break;
             }
 
-            return _context9.abrupt('return', item);
+            return _context8.abrupt('return', item);
 
           case 7:
-            return _context9.abrupt('return', Promise.reject(new Error('item ' + id + ' is an ' + item.type + ', not a comment')));
+            return _context8.abrupt('return', null);
 
           case 8:
           case 'end':
-            return _context9.stop();
+            return _context8.stop();
         }
       }
-    }, _callee9, this);
+    }, _callee8, this);
   }));
 
-  return function fetchComment(_x7) {
-    return _ref12.apply(this, arguments);
+  return function fetchStory(_x7) {
+    return _ref10.apply(this, arguments);
+  };
+}();
+
+var fetchComment = function () {
+  var _ref13 = _asyncToGenerator(regeneratorRuntime.mark(function _callee10(id) {
+    var item;
+    return regeneratorRuntime.wrap(function _callee10$(_context10) {
+      while (1) {
+        switch (_context10.prev = _context10.next) {
+          case 0:
+            _context10.next = 2;
+            return fetchItem(id);
+
+          case 2:
+            item = _context10.sent;
+
+            if (!(item.type === 'comment')) {
+              _context10.next = 7;
+              break;
+            }
+
+            return _context10.abrupt('return', item);
+
+          case 7:
+            return _context10.abrupt('return', Promise.reject(new Error('item ' + id + ' is an ' + item.type + ', not a comment')));
+
+          case 8:
+          case 'end':
+            return _context10.stop();
+        }
+      }
+    }, _callee10, this);
+  }));
+
+  return function fetchComment(_x9) {
+    return _ref13.apply(this, arguments);
   };
 }();
 
@@ -416,41 +458,41 @@ function formatPoll(_ref3, opts) {
   }).join("\n");
 }
 
-function fetchComments(_ref10) {
-  var kids = _ref10.kids;
+function fetchComments(_ref11) {
+  var kids = _ref11.kids;
 
   if (!kids) {
     return Promise.resolve([]);
   }
   return Promise.all(kids.map(function () {
-    var _ref11 = _asyncToGenerator(regeneratorRuntime.mark(function _callee8(id) {
+    var _ref12 = _asyncToGenerator(regeneratorRuntime.mark(function _callee9(id) {
       var comment, kids;
-      return regeneratorRuntime.wrap(function _callee8$(_context8) {
+      return regeneratorRuntime.wrap(function _callee9$(_context9) {
         while (1) {
-          switch (_context8.prev = _context8.next) {
+          switch (_context9.prev = _context9.next) {
             case 0:
-              _context8.next = 2;
+              _context9.next = 2;
               return fetchComment(id);
 
             case 2:
-              comment = _context8.sent;
-              _context8.next = 5;
+              comment = _context9.sent;
+              _context9.next = 5;
               return fetchComments(comment);
 
             case 5:
-              kids = _context8.sent;
-              return _context8.abrupt('return', { comment: comment, kids: kids });
+              kids = _context9.sent;
+              return _context9.abrupt('return', { comment: comment, kids: kids });
 
             case 7:
             case 'end':
-              return _context8.stop();
+              return _context9.stop();
           }
         }
-      }, _callee8, this);
+      }, _callee9, this);
     }));
 
-    return function (_x6) {
-      return _ref11.apply(this, arguments);
+    return function (_x8) {
+      return _ref12.apply(this, arguments);
     };
   }()));
 }
@@ -463,9 +505,9 @@ function flatMap(xs, fn) {
 
   try {
     for (var _iterator2 = xs[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-      var _x8 = _step2.value;
+      var _x10 = _step2.value;
 
-      result.push.apply(result, fn(_x8));
+      result.push.apply(result, fn(_x10));
     }
   } catch (err) {
     _didIteratorError2 = true;

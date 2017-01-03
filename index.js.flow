@@ -140,10 +140,24 @@ export async function betterClient() {
 export async function fetchTopStories(n: number): Promise<Story[]> {
   const storyIds = await nodeFetch(`https://hacker-news.firebaseio.com/v0/topstories.json`)
     .then(res => res.json())
+  return fetchNStories(storyIds, n)
+}
+
+async function fetchNStories(storyIds: ID[], n: number): Promise<Story[]> {
   const results = await Promise.all(
     storyIds.slice(0,n).map(fetchStory)
   )
-  return nub(results)
+  const justStories = nub(results)
+
+  // Check to see if `nub` left us with fewer than `n` stories.
+  if (justStories.length < n && storyIds.length > n) {
+    const m = n - justStories.length
+    const remainingIds = storyIds.slice(n)
+    return justStories.concat(await fetchNStories(remainingIds, m))
+  }
+  else {
+    return justStories
+  }
 }
 
 // Fetch an item, but resolve to `null` if the item is not a story.
