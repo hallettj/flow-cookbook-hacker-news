@@ -1,2 +1,6 @@
 node_modules/
 npm-debug.log
+
+# Ignore generated files
+index.js
+index.js.map

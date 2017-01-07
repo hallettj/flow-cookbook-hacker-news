@@ -6,7 +6,7 @@
   "scripts": {
     "flow": "flow",
     "demo": "npm run prepublish && node --require 'regenerator-runtime/runtime' --eval \"require('./index').main()\"",
-    "prepublish": "babel index.js.flow --out-file index.js --source-maps"
+    "prepublish": "npm run flow && make"
   },
   "author": "Jesse Hallett <jesse@sitr.us>",
   "license": "MIT",
@@ -17,6 +17,11 @@
       "es2015"
     ]
   },
+  "files": [
+    "index.js",
+    "index.js.flow",
+    "index.js.map"
+  ],
   "dependencies": {
     "node-fetch": "*"
   },
