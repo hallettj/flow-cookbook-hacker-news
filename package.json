@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "flow": "flow",
-    "demo": "npm run prepublish && node --require 'regenerator-runtime/runtime' --eval \"require('./index').main()\"",
-    "prepublish": "npm run flow && make"
+    "demo": "yarn run prepublish && node --require 'regenerator-runtime/runtime' --eval \"require('./index').main()\"",
+    "prepublish": "yarn run flow && make"
   },
   "author": "Jesse Hallett <jesse@sitr.us>",
   "license": "MIT",
