@@ -4,7 +4,7 @@
 // a global `fetch` function.
 const nodeFetch: typeof fetch = require('node-fetch')
 
-export type Item = Story | Ask | Job | Poll | PollOpt | Comment
+export type Item = Story | Ask | Job | Poll | PollOpt | Comment | DeletedComment
 
 export type Story   = { type: 'story', kids?: ID[], url: URL }                 & ItemCommon & TopLevel
 export type Ask     = { type: 'ask',  kids?: ID[], text: string, url: URL }    & ItemCommon & TopLevel
@@ -13,18 +13,30 @@ export type Poll    = { type: 'poll', kids?: ID[], parts: ID[], text: string } &
 export type PollOpt = { type: 'pollopt', parent: ID, score: number, text: string } & ItemCommon
 export type Comment = { type: 'comment', kids?: ID[], parent: ID, text: string }   & ItemCommon
 
+export type DeletedComment = {
+  type:    'comment',
+  dead:    true,
+  deleted: true,
+  id:      ID,
+  kids?:   ID[],
+  parent:  ID,
+  time:    number,
+}
+
 // Fields common to all item types
 type ItemCommon = {
-  by:   Username,
-  id:   ID,
-  time: number,
+  by:       Username,
+  id:       ID,
+  time:     number,
+  dead?:    false,
+  deleted?: false,
 }
 
 // Fields common to top-level item types
 type TopLevel = {
   descendents: number,
-  score: number,
-  title: string,
+  score:       number,
+  title:       string,
 }
 
 // These type aliases just help to illustrate the purpose of certain fields
@@ -60,7 +72,9 @@ function formatItem(item: Item): string {
     case 'pollopt':
       return `poll option: ${item.text}`
     case 'comment':
-      return `${item.by} commented: ${item.text.slice(0,60)}...`
+      return item.deleted
+        ? '(deleted)'
+        : `${item.by} commented: ${item.text.slice(0,60)}...`
     default:
       throw new Error(`unknown item type: ${item.type}`)
   }
@@ -99,7 +113,7 @@ export async function main() {
   })
 }
 
-function formatPoll({ by, title }: Poll, opts: PollOpt[]): string {
+function formatPoll({ by, deleted, title }: Poll, opts: PollOpt[]): string {
   const headline = `${by} started a poll: "${title}"`
   return headline + "\n" + opts.map(opt => `  - ${opt.text}`).join("\n")
 }
@@ -171,9 +185,9 @@ async function fetchStory(id: ID): Promise<?Story> {
   }
 }
 
-export type CommentTree = { comment: Comment, kids: CommentTree[] }
+export type CommentTree = { comment: Comment | DeletedComment, kids: CommentTree[] }
 
-export function fetchComments({ kids }: Story | Comment): Promise<CommentTree[]> {
+export function fetchComments({ kids }: Story | Comment | DeletedComment): Promise<CommentTree[]> {
   if (!kids) {
     return Promise.resolve([])
   }
@@ -184,7 +198,7 @@ export function fetchComments({ kids }: Story | Comment): Promise<CommentTree[]>
   }))
 }
 
-async function fetchComment(id: ID): Promise<Comment> {
+async function fetchComment(id: ID): Promise<Comment | DeletedComment> {
   const item = await fetchItem(id)
   if (item.type === 'comment') {
     return item
