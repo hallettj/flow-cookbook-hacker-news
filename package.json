@@ -1,5 +1,5 @@
 {
-  "name": "hacker-news-example",
+  "name": "flow-cookbook-hacker-news",
   "version": "1.0.0",
   "description": "Example that demonstrates type-checking API data with Flow",
   "main": "index.js",
