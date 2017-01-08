@@ -10,12 +10,12 @@ Requires [yarn](https://yarnpkg.com/)
 
 Install project dependencies before running the code or running the type checker:
 
-    npm install
+    yarn install
 
 To run the code:
 
-    npm run demo
+    yarn start
 
 To run Flow type-checking:
 
-    npm run flow
+    yarn run flow
