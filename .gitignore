@@ -1,6 +1,10 @@
 node_modules/
 npm-debug.log
+yarn-error.log
 
-# Ignore generated files
-index.js
-index.js.map
+# Generated files
+build/
+lib/
+
+# Misc
+.DS_Store

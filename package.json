@@ -2,10 +2,10 @@
   "name": "flow-cookbook-hacker-news",
   "version": "1.0.0",
   "description": "Example that demonstrates type-checking API data with Flow",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
     "flow": "flow",
-    "start": "npm run build && node --require 'regenerator-runtime/runtime' --eval \"require('./index').main()\"",
+    "start": "npm run build && node --require 'regenerator-runtime/runtime' --eval \"require('./$npm_package_main').main()\"",
     "test": "flow check",
     "build": "make",
     "prepublishOnly": "npm test && npm run build",
@@ -22,9 +22,7 @@
     ]
   },
   "files": [
-    "index.js",
-    "index.js.flow",
-    "index.js.map"
+    "lib/"
   ],
   "dependencies": {
     "node-fetch": "*"
