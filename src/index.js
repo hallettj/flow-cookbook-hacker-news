@@ -1,4 +1,15 @@
-/* @flow */
+/*
+ * This is a demonstration Javascript type-checking using Flow. This example is
+ * a Hacker News client.
+ *
+ * Take a look at the accompanying blog post:
+ * http://sitr.us/2016/12/20/flow-cookbook-unpacking-json.html
+ *
+ * The full code for this project is here:
+ * https://github.com/hallettj/flow-cookbook-hacker-news
+ *
+ * @flow
+ */
 
 // The `typeof fetch` works because Flow has built-in type definitions for
 // a global `fetch` function.
